@@ -75,21 +75,25 @@ void loop() {
     }
     button3 = newButton3;
 
-    if (
-      (relay1 != relay2) &&
+    if (  // Simultaneous press
       (sameSign(button1, button2)) &&
-      (
-        abs(button1) == CONTACT_BOUNCE_DELAY && abs(button2) <= CONTACT_BOUNCE_DELAY ||
-        abs(button2) == CONTACT_BOUNCE_DELAY && abs(button1) <= CONTACT_BOUNCE_DELAY
-      )
+      (relay1 != relay2) &&
+      (max(abs(button1), abs(button2)) == CONTACT_BOUNCE_DELAY)
     ) {
-        relay1 = false;
-        relay2 = false;
-    } else if (abs(button1) == CONTACT_BOUNCE_DELAY) {
-      relay1 = !relay1;
-    } else if (abs(button2) == CONTACT_BOUNCE_DELAY) {
-      relay2 = !relay2;
-    } else if (abs(button3) == CONTACT_BOUNCE_DELAY) {
+      relay1 = false;
+      relay2 = false;
+      button1 = copysign(CONTACT_BOUNCE_DELAY, button1);
+      button2 = copysign(CONTACT_BOUNCE_DELAY, button2);
+    } else {
+      if (abs(button1) == CONTACT_BOUNCE_DELAY) {
+        relay1 = !relay1;
+      }
+      if (abs(button2) == CONTACT_BOUNCE_DELAY) {
+        relay2 = !relay2;
+      }
+    }
+
+    if (abs(button3) == CONTACT_BOUNCE_DELAY) {
       if (
         (relay1 || relay2) &&
         (abs(lastButton3) > COMMAND_TIMEOUT)
